@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Function to install gitleaks using curl pipe sh method
+install_gitleaks() {
+    echo "Installing gitleaks..."
+    curl -sSfL https://raw.githubusercontent.com/alexanderlukjanenko/gitleaks-pre-commit-hook/main/install.sh | sh
+}
+
+# Check if gitleaks is installed
+if ! command -v gitleaks &> /dev/null; then
+    echo "gitleaks is not installed"
+    install_gitleaks
+fi
+
+# Check if gitleaks is enabled via git config
+if [[ "$(git config --get hooks.gitleaks.enabled)" == "true" ]]; then
+    # Run gitleaks
+    echo "Running gitleaks..."
+    gitleaks
+else
+    echo "Gitleaks is not enabled via git config"
+    exit 0
+fi

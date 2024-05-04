@@ -13,7 +13,7 @@ curl -sSfL -o ./git/hooks/pre-commit https://raw.githubusercontent.com/alexander
 ```
 - set exec permissions
 ```sh
-chmod +x ./git/hooks/pre-commit 
+chmod +x ./.git/hooks/pre-commit 
 ```
 - enable the hook with git config
 ```sh

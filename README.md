@@ -25,7 +25,7 @@ git config hooks.gitleaks.enabled true
 ![usage example](./usage_example.png)
 
 ## Know issues
-In case the automatic installation failed. Run the installation command in your terminal
+In case the automatic installation of gitleaks failed. Run the installation command in your terminal
 ```sh
 curl -sSfL https://raw.githubusercontent.com/alexanderlukjanenko/gitleaks-pre-commit-hook/main/install.sh | sh
 ```

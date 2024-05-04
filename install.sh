@@ -3,7 +3,7 @@ set -e
 
 DEFAULT_BIN_DIR="/usr/local/bin"
 BIN_DIR=${1:-"${DEFAULT_BIN_DIR}"}
-GITHUB_REPO="fluxcd/flux2"
+GITHUB_REPO="gitleaks/gitleaks"
 
 # Helper functions for logs
 info() {
@@ -71,10 +71,10 @@ verify_downloader() {
 
 # Create tempory directory and cleanup when done
 setup_tmp() {
-    TMP_DIR=$(mktemp -d -t flux-install.XXXXXXXXXX)
-    TMP_METADATA="${TMP_DIR}/flux.json"
-    TMP_HASH="${TMP_DIR}/flux.hash"
-    TMP_BIN="${TMP_DIR}/flux.tar.gz"
+    TMP_DIR=$(mktemp -d -t gitleaks-install.XXXXXXXXXX)
+    TMP_METADATA="${TMP_DIR}/gitleaks.json"
+    TMP_HASH="${TMP_DIR}/gitleaks.hash"
+    TMP_BIN="${TMP_DIR}/gitleaks.tar.gz"
     cleanup() {
         local code=$?
         set +e
@@ -87,8 +87,8 @@ setup_tmp() {
 
 # Find version from Github metadata
 get_release_version() {
-    if [[ -n "${FLUX_VERSION}" ]]; then
-      SUFFIX_URL="tags/v${FLUX_VERSION}"
+    if [[ -n "${GITLEAKS_VERSION}" ]]; then
+      SUFFIX_URL="tags/v${GITLEAKS_VERSION}"
     else
       SUFFIX_URL="latest"
     fi
@@ -98,9 +98,9 @@ get_release_version() {
     info "Downloading metadata ${METADATA_URL}"
     download "${TMP_METADATA}" "${METADATA_URL}"
 
-    VERSION_FLUX=$(grep '"tag_name":' "${TMP_METADATA}" | sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-)
-    if [[ -n "${VERSION_FLUX}" ]]; then
-        info "Using ${VERSION_FLUX} as release"
+    VERSION_GITLEAKS=$(grep '"tag_name":' "${TMP_METADATA}" | sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-)
+    if [[ -n "${VERSION_GITLEAKS}" ]]; then
+        info "Using ${VERSION_GITLEAKS} as release"
     else
         fatal "Unable to determine release version"
     fi
@@ -162,24 +162,17 @@ vercomp () {
 
 # Download hash from Github URL
 download_hash() {
-    HASH_URL="https://github.com/${GITHUB_REPO}/releases/download/v${VERSION_FLUX}/flux_${VERSION_FLUX}_checksums.txt"
-    # NB: support the checksum filename format prior to v0.6.0
-    set +e
-    vercomp ${VERSION_FLUX} 0.6.0
-    if [[ $? -eq 2 ]]; then
-        HASH_URL="https://github.com/${GITHUB_REPO}/releases/download/v${VERSION_FLUX}/flux2_${VERSION_FLUX}_checksums.txt"
-    fi
-    set -e
+    HASH_URL="https://github.com/${GITHUB_REPO}/releases/download/v${VERSION_GITLEAKS}/gitleaks_${VERSION_GITLEAKS}_checksums.txt"
 
     info "Downloading hash ${HASH_URL}"
     download "${TMP_HASH}" "${HASH_URL}"
-    HASH_EXPECTED=$(grep " flux_${VERSION_FLUX}_${OS}_${ARCH}.tar.gz$" "${TMP_HASH}")
+    HASH_EXPECTED=$(grep " gitleaks_${VERSION_GITLEAKS}_${OS}_${ARCH}.tar.gz$" "${TMP_HASH}")
     HASH_EXPECTED=${HASH_EXPECTED%%[[:blank:]]*}
 }
 
 # Download binary from Github URL
 download_binary() {
-    BIN_URL="https://github.com/${GITHUB_REPO}/releases/download/v${VERSION_FLUX}/flux_${VERSION_FLUX}_${OS}_${ARCH}.tar.gz"
+    BIN_URL="https://github.com/${GITHUB_REPO}/releases/download/v${VERSION_GITLEAKS}/gitleaks_${VERSION_GITLEAKS}_${OS}_${ARCH}.tar.gz"
     info "Downloading binary ${BIN_URL}"
     download "${TMP_BIN}" "${BIN_URL}"
 }
@@ -212,10 +205,10 @@ verify_binary() {
 # Setup permissions and move binary
 setup_binary() {
     chmod 755 "${TMP_BIN}"
-    info "Installing flux to ${BIN_DIR}/flux"
+    info "Installing gitleaks to ${BIN_DIR}/gitleaks"
     tar -xzof "${TMP_BIN}" -C "${TMP_DIR}"
 
-    local CMD_MOVE="mv -f \"${TMP_DIR}/flux\" \"${BIN_DIR}\""
+    local CMD_MOVE="mv -f \"${TMP_DIR}/gitleaks\" \"${BIN_DIR}\""
     if [[ -w "${BIN_DIR}" ]]; then
         eval "${CMD_MOVE}"
     else

@@ -228,3 +228,4 @@ setup_binary() {
     verify_binary
     setup_binary
 }
+
